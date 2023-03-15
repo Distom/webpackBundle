@@ -32,6 +32,7 @@ module.exports = {
 		splitChunks: {
 			chunks: 'all',
 		},
+		usedExports: true, //tree-shaking
 	},
 	plugins,
 	module: {
