@@ -108,7 +108,8 @@ module.exports = {
 					}
 				},
 				generator: {
-					filename: 'img/[name][ext]'
+					//filename: 'img/[name][ext]'
+					filename: '[path][name][ext]',
 				}
 			},
 		]
