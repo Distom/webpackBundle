@@ -2,20 +2,27 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
+const EslintWebpackPlugin = require('eslint-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const devMode = mode === 'development';
 const target = devMode ? 'web' : 'browserslist';
 const devtool = devMode ? 'eval-cheap-module-source-map' : undefined;
 
-const plugins = [
-  new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, 'src', 'index.html'),
-  }),
-  new MiniCssExtractPlugin({
-    filename: 'style.[contenthash].css',
-  }),
-];
+function getPlugins() {
+  const plugins = [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src', 'index.html'),
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'style.[contenthash].css',
+    }),
+  ];
+
+  if (devMode) plugins.push(new EslintWebpackPlugin());
+
+  return plugins;
+}
 
 module.exports = {
   mode,
@@ -34,7 +41,7 @@ module.exports = {
     },
     usedExports: true, // tree-shaking
   },
-  plugins,
+  plugins: getPlugins(),
   module: {
     rules: [
       // HTML
