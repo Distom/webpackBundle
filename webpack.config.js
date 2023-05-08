@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
@@ -10,18 +11,28 @@ const target = devMode ? 'web' : 'browserslist';
 const devtool = devMode ? 'eval-cheap-module-source-map' : undefined;
 
 function getPlugins() {
-  const plugins = [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'index.html'),
-    }),
-    new MiniCssExtractPlugin({
-      filename: 'style.[contenthash].css',
-    }),
-  ];
+	const plugins = [
+		new HtmlWebpackPlugin({
+			template: path.resolve(__dirname, 'src', 'index.html'),
+		}),
+		new MiniCssExtractPlugin({
+			filename: 'style.[contenthash].css',
+		}),
+	];
 
-  if (devMode) plugins.push(new EslintWebpackPlugin());
+	if (devMode) plugins.push(new EslintWebpackPlugin());
 
-  return plugins;
+	if (fs.existsSync(path.resolve(__dirname, 'src', '404.html'))) {
+		plugins.push(
+			new HtmlWebpackPlugin({
+				template: path.resolve(__dirname, 'src', '404.html'),
+				filename: '404.html',
+				inject: false,
+			}),
+		);
+	}
+
+	return plugins;
 }
 
 module.exports = {
@@ -35,6 +46,11 @@ module.exports = {
     clean: true,
     assetModuleFilename: 'assets/[name][ext]',
   },
+  devServer: {
+		historyApiFallback: {
+			index: '/404.html',
+		},
+	},
   optimization: {
     splitChunks: {
       chunks: 'all',
